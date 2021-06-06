@@ -18,7 +18,7 @@ def get_data_from_tdxfile(stock_code, type) -> List[RawBar]:
     type：市场代码，sh沪市，sz深市
     '''
     bars = []
-    filepath = "/Users/huayuting/Desktop/00245996.txt"
+    filepath = "/Users/huayuting/work/python/github.com/czsc/00245996.txt"
     for line in open(filepath, 'r').readlines():
         result = ' '.join(line.split()).split(" ")
         stock_date = result[0]

@@ -515,8 +515,7 @@ class CZSC:
         :param height: 图表高度
         :return:
         """
-        home_path = os.path.expanduser("~")
-        file_html = os.path.join(home_path, "temp_czsc.html")
+        file_html = os.path.join("/Users/huayuting/work/python/github.com/czsc", "temp_czsc.html")
         chart = self.to_echarts(width, height)
         chart.render(file_html)
         webbrowser.open(file_html)
