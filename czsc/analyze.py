@@ -226,7 +226,7 @@ def get_sub_bis(bis: List[BI], bi: BI) -> List[BI]:
 
 
 class CZSC:
-    def __init__(self, bars: List[RawBar], freq: str, max_bi_count=30):
+    def __init__(self, bars: List[RawBar], freq: str, max_bi_count=100):
         """
 
         :param bars: K线数据
@@ -244,6 +244,9 @@ class CZSC:
 
         for bar in bars:
             self.update(bar)
+
+        for bi in self.bi_list:
+            print(bi.fx_a.dt)
         self.signals = self.get_signals()
 
     def __repr__(self):

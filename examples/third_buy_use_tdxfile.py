@@ -8,11 +8,37 @@ from czsc.enum import Signals
 import struct
 import os
 
+TDX_DIR = r"D:\new_jyplug"  # 首先要设置通达信的安装目录
 
-TDX_DIR = r"D:\new_jyplug"   # 首先要设置通达信的安装目录
 
 # 从通达信目录读入数据
 def get_data_from_tdxfile(stock_code, type) -> List[RawBar]:
+    '''
+    stock_code:股票代码 600667
+    type：市场代码，sh沪市，sz深市
+    '''
+    bars = []
+    filepath = "/Users/huayuting/Desktop/00245996.txt"
+    for line in open(filepath, 'r').readlines():
+        result = ' '.join(line.split()).split(" ")
+        stock_date = result[0]
+        stock_open = float(result[1])
+        stock_high = float(result[2])
+        stock_low = float(result[3])
+        stock_close = float(result[4])
+        stock_amount = float(result[5])
+        stock_vol = float(result[6])
+        date_format = datetime.strptime(str(stock_date), '%Y/%M/%d')  # 格式化日期
+        date_format = date_format.strftime('%Y-%M-%d')
+
+        bar = RawBar(symbol=stock_code, dt=pd.to_datetime(date_format), open=stock_open,
+                     close=stock_close, high=stock_high, low=stock_low,
+                     vol=stock_vol)
+        bars.append(bar)
+    return bars
+
+
+def get_data_from_tdxfile1(stock_code, type) -> List[RawBar]:
     '''
     stock_code:股票代码 600667
     type：市场代码，sh沪市，sz深市
@@ -52,6 +78,7 @@ def get_data_from_tdxfile(stock_code, type) -> List[RawBar]:
 def is_third_buy(stock_code, type):
     bars = get_data_from_tdxfile(stock_code, type)
     c = CZSC(bars, freq="日线")
+    c.open_in_browser()
     if c.signals['倒1形态'] in [Signals.LI0.value]:
         return True
     else:
@@ -60,19 +87,25 @@ def is_third_buy(stock_code, type):
 
 if __name__ == '__main__':
     # 找出沪市6开头的，中三买的票
+    scode = "/Users/huayuting/Desktop/002459.txt"
+    if is_third_buy(scode, "sh"):
+        print("{} - 日线三买".format(scode))
+
+
+def aaa():
     rootdir = TDX_DIR + r"\vipdoc\sh\lday"
     list = os.listdir(rootdir)  # 列出文件夹下所有的目录与文件
     for i in range(0, len(list)):
-        scode=list[i][2:8]
+        scode = list[i][2:8]
         if scode.startswith("6"):
-            if is_third_buy(scode,"sh"):
+            if is_third_buy(scode, "sh"):
                 print("{} - 日线三买".format(scode))
 
     # 找出深圳中0开头的三买的票
     rootdir = TDX_DIR + r"\vipdoc\sz\lday"
     list = os.listdir(rootdir)  # 列出文件夹下所有的目录与文件
     for i in range(0, len(list)):
-        scode=list[i][2:8]
+        scode = list[i][2:8]
         if scode.startswith("0"):
-            if is_third_buy(scode,"sz"):
+            if is_third_buy(scode, "sz"):
                 print("{} - 日线三买".format(scode))
